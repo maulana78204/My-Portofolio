@@ -14,10 +14,10 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  deployments: write  # ✅ Tambahkan izin untuk deployments
+  deployments: write  # ✅ Tambahkan izin deployments
+  actions: write  # ✅ Tambahkan izin untuk upload artifact
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -27,17 +27,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Setup Pages
+
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v3
-      - name: Build with Jekyll
+
+      - name: Build Jekyll Site
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3  # ✅ Pastikan menggunakan v3
+
+      - name: Debug - List Build Output
+        run: ls -lah _site  # ✅ Debug untuk cek apakah folder _site ada
+
+      - name: Upload Build Artifact
+        uses: actions/upload-pages-artifact@v3  # ✅ Pastikan menggunakan versi terbaru
 
   # Deployment job
   deploy:
@@ -49,5 +55,6 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3  # ✅ Update ke v3
+        uses: actions/deploy-pages@v3  # ✅ Update ke versi terbaru
+
 
